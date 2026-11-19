@@ -23,6 +23,9 @@ VALVE_TAGS: dict[str, tuple[str, object]] = {
     "warning": ("string", ""),
     "warning_hidden": ("boolean", True),
     "open_until_hidden": ("boolean", True),
+    # Both controls show until a trusted reading says which one applies.
+    "open_hidden": ("boolean", False),
+    "close_hidden": ("boolean", False),
 }
 
 

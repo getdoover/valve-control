@@ -249,3 +249,23 @@ def test_settings_payload_shape():
         ],
         "updated_ts": T0,
     }
+
+
+# ------------------------------------------------------------------ controls
+
+
+@pytest.mark.parametrize(
+    "status, show_open, show_close",
+    [
+        (Status(state=CLOSED), True, False),
+        (Status(state=OPEN), False, True),
+        (Status(), True, True),  # no reading yet
+        (Status(state=CLOSED, pending="open"), True, True),
+        (Status(state=OPEN, pending="close"), True, True),
+        (Status(state=CLOSED, problem="Open not confirmed"), True, True),
+        (Status(state=OPEN, problem="Close was rejected"), True, True),
+    ],
+)
+def test_controls_offer_the_action_that_changes_the_state(status, show_open, show_close):
+    shown = model.controls(status)
+    assert (shown.show_open, shown.show_close) == (show_open, show_close)

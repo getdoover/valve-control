@@ -1,5 +1,7 @@
 """The page: one panel per configured valve, built at setup from the config.
 
+Only the control that changes the reported state is shown (Open while Closed, Close
+while Open); both show while the state is unknown, pending or after a failed command.
 Every value shown is a tag the processor keeps, so the panels read cleanly with no data
 ("Unknown", empty times) and update as readings arrive. Each control is named
 `<valve key>__<action>`, which application.py routes back to its valve.
@@ -92,6 +94,7 @@ class ValveControlUI(ui.UI):
                     max_val=valve.max_open_min if valve.max_open_min > 0 else ui.NotSet,
                     default=valve.default_open_min,
                     requires_confirm=True,
+                    hidden=self._tag(valve, "open_hidden"),
                     position=7,
                 )
             )
@@ -101,6 +104,7 @@ class ValveControlUI(ui.UI):
                     open_label,
                     name=element_name(k, OPEN),
                     requires_confirm=True,
+                    hidden=self._tag(valve, "open_hidden"),
                     position=7,
                 )
             )
@@ -109,6 +113,7 @@ class ValveControlUI(ui.UI):
                 close_label,
                 name=element_name(k, CLOSE),
                 requires_confirm=True,
+                hidden=self._tag(valve, "close_hidden"),
                 position=8,
             )
         )

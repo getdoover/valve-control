@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from pydoover import config
-from pydoover.config import ApplicationPosition
+from pydoover.config import ApplicationDefaultOpen, ApplicationPosition
 from pydoover.processor import ManySubscriptionConfig, ScheduleConfig
 
 from .model import LATCHED, TIMED, Valve, build_valve
@@ -145,7 +145,8 @@ class ValveControlConfig(config.Schema):
         position=9,
     )
 
-    position = ApplicationPosition(position=10)
+    position = ApplicationPosition(default=30, position=10)
+    default_open = ApplicationDefaultOpen(default=True, position=11)
 
     def valve_list(self) -> list[Valve]:
         taken: set[str] = set()

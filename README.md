@@ -57,6 +57,8 @@ Until the first reading arrives each valve shows **Unknown**, and nothing is not
 | **Settings Channel** | `settings_channel` | Whose aggregate receives the valves' settings | `control_settings` |
 | **Subscription** | `dv_proc_subscriptions` | Channels that invoke the app | `["io_state", "ui_cmds", "io_commands"]` |
 | **Schedule** | `dv_proc_schedules` | How often timeouts are checked between readings | `rate(5 minutes)` |
+| **Position** | `dv_app_position` | Hidden. Where the app sits on the device page; smaller is higher | `30` |
+| **Default Open** | `dv_app_default_open` | Hidden. Whether the app's panel starts expanded | `true` |
 
 Each **Valve**:
 
@@ -82,7 +84,12 @@ Each valve has a panel with:
 - **Closes** -- for a confirmed timed open, a countdown to when the edge is due to close it
 - **Last Changed** -- when the reported state last changed
 - **Last Command** -- the last command and what became of it (sent, accepted, confirmed, rejected, not confirmed)
-- **Open For (min)** (Timed) or **Open** (Latched), and **Close**
+- **Open For (min)** (Timed) or **Open** (Latched), and **Close** -- only the control that
+  changes the reported state is offered: a valve reporting **Closed** shows only the open
+  control, one reporting **Open** shows only **Close** (with **Closes** counting down for a
+  timed open). While the state is unknown (no reading yet), a command is pending, or a
+  command was not confirmed or was rejected, both are shown: when the reported state can't
+  be trusted, an explicit close is the safe action to have to hand
 - A warning line while a command is pending, after one times out or is rejected, when the
   valve has been open longer than its maximum, or when its configuration is incomplete
 

@@ -113,6 +113,9 @@ class ValveControlApplication(Application):
             tag_name(valve.key, "open_until_hidden"),
             not (status.state == model.OPEN and status.open_until is not None),
         )
+        shown = model.controls(status)
+        await self._set(tag_name(valve.key, "open_hidden"), not shown.show_open)
+        await self._set(tag_name(valve.key, "close_hidden"), not shown.show_close)
 
     async def _check_and_save(self, valve: model.Valve, status: model.Status):
         timeout_s = self._number("confirm_timeout_s", 300.0)

@@ -448,6 +448,30 @@ def warning_text(
     return None
 
 
+# --------------------------------------------------------------------------- controls
+
+
+@dataclass
+class Controls:
+    """Which of a valve's controls the page shows."""
+
+    show_open: bool = True
+    show_close: bool = True
+
+
+def controls(status: Status) -> Controls:
+    """Offer the control that changes the reported state, and only that one.
+
+    Closed shows only Open; Open shows only Close. When the reported state can't be
+    trusted -- no reading yet, a command still awaiting confirmation, or a command that
+    timed out or was rejected -- both are shown, because then an explicit close is the
+    safe thing to have to hand whatever the valve is actually doing.
+    """
+    if status.pending or status.problem or status.state not in (OPEN, CLOSED):
+        return Controls(show_open=True, show_close=True)
+    return Controls(show_open=status.state == CLOSED, show_close=status.state == OPEN)
+
+
 # --------------------------------------------------------------------------- open request
 
 

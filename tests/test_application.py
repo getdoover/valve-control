@@ -208,3 +208,36 @@ async def test_open_too_long_notifies(monkeypatch):
     await nxt.on_schedule(None)
     (note,) = notifications(nxt)
     assert "longer than its 4 h maximum" in note["message"]
+
+
+def shown(app, key="flood_gate_1"):
+    t = tags(app)
+    return (
+        not t.get(f"{key}_open_hidden", False),
+        not t.get(f"{key}_close_hidden", False),
+    )
+
+
+async def test_controls_follow_the_reported_state(monkeypatch):
+    app = await make_app(monkeypatch)
+    await app.on_schedule(None)
+    assert shown(app) == (True, True)  # no data: both
+
+    panel = app.ui.to_schema()["children"]["flood_gate_1__panel"]["children"]
+    assert "open_hidden" in str(panel["flood_gate_1__open_for"]["hidden"])
+    assert "close_hidden" in str(panel["flood_gate_1__close"]["hidden"])
+
+    await app.on_message_create(message("io_state", {"flood_gate_1": 0}))
+    assert shown(app) == (True, False)  # closed: only Open
+
+    await app.on_control(Ctx("flood_gate_1__open_for"), 30)
+    assert shown(app) == (True, True)  # pending: both
+
+    nxt = await again(app, monkeypatch, T0 + 10_000)
+    await nxt.on_message_create(message("io_state", {"flood_gate_1": 1}))
+    assert shown(nxt) == (False, True)  # open: only Close
+
+    await nxt.on_control(Ctx("flood_gate_1__close"), True)
+    late = await again(nxt, monkeypatch, T0 + 10_000 + 301_000)
+    await late.on_schedule(None)
+    assert shown(late) == (True, True)  # not confirmed: both
