@@ -6,6 +6,7 @@
         "visibility": "PUB",
         "allow_many": true,
         "description": "Open and close on/off valves and gates remotely, with their reported state, pending commands and timed opens.",
+        "icon_url": "https://cdn.jsdelivr.net/gh/getdoover/app-icons@3d5d1b37246278cfac11c00155f5e0b30f6ee5de/icons/valve_control.png",
         "long_description": "README.md",
         "depends_on": [],
         "organisation_id": null,
