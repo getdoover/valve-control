@@ -1,0 +1,29 @@
+{
+    "valve_control": {
+        "name": "valve_control",
+        "display_name": "Valve Control",
+        "type": "PRO",
+        "visibility": "PUB",
+        "allow_many": true,
+        "description": "Open and close on/off valves and gates remotely, with their reported state, pending commands and timed opens.",
+        "long_description": "README.md",
+        "depends_on": [],
+        "organisation_id": 93957122026437134,
+        "export_config_command": "export-config",
+        "export_ui_command": "export-ui",
+        "export_notification_command": "export-notifications",
+        "lambda_config": {
+            "Environment": {},
+            "Runtime": "python3.13",
+            "Timeout": 60,
+            "Handler": "src.valve_control.handler",
+            "MemorySize": 128,
+            "Architectures": [
+                "arm64"
+            ]
+        },
+        "repository_url": "https://github.com/getdoover/valve-control",
+        "data_access": "read_write",
+        "has_ui": true
+    }
+}
